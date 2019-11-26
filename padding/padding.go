@@ -8,7 +8,8 @@ package padding
 
 import (
 	"bytes"
-	"errors"
+	//"fmt"
+	//"errors"
 )
 
 // Padding interface defines functions Pad and Unpad implemented for PKCS #5 and
@@ -66,23 +67,11 @@ func (p *Padder) Pad(buf []byte) ([]byte, error) {
 // 	[]byte{0x0A, 0x0B, 0x0C, 0x0D}
 func (p *Padder) Unpad(buf []byte) ([]byte, error) {
 	bufLen := len(buf)
-	if bufLen == 0 {
-		return nil, errors.New("cryptgo/padding: invalid padding size")
-	}
-
-	pad := buf[bufLen-1]
-	padLen := int(pad)
-	if padLen > bufLen || padLen > p.blockSize {
+	padLen := int(buf[bufLen-1])
+	if padLen >= bufLen || padLen > p.blockSize {
 		return buf, nil
 		// 兼容php解密，这里不能报错
 		//return nil, errors.New("cryptgo/padding: invalid padding size")
 	}
-
-	for _, v := range buf[bufLen-padLen : bufLen-1] {
-		if v != pad {
-			return nil, errors.New("cryptgo/padding: invalid padding")
-		}
-	}
-
 	return buf[:bufLen-padLen], nil
 }
