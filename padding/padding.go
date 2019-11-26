@@ -73,7 +73,9 @@ func (p *Padder) Unpad(buf []byte) ([]byte, error) {
 	pad := buf[bufLen-1]
 	padLen := int(pad)
 	if padLen > bufLen || padLen > p.blockSize {
-		return nil, errors.New("cryptgo/padding: invalid padding size")
+		return buf, nil
+		// 兼容php解密，这里不能报错
+		//return nil, errors.New("cryptgo/padding: invalid padding size")
 	}
 
 	for _, v := range buf[bufLen-padLen : bufLen-1] {
